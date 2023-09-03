@@ -99,13 +99,16 @@ DIR %CD%\01_Input_RPA /b *.rpa 2>nul
 ECHO.
 ECHO ----------------------------------------------------------------------------------------
 ECHO.
-ECHO Input file name
-SET /P file_rpa="File to decompile:"
-ECHO You chose %file_rpa%.rpa to decompile.
 ECHO.
 ECHO ----------------------------------------------------------------------------------------
 ECHO.
-py -3 -m unrpa -mp "%CD%\02_Output_RPA" "%CD%\01_Input_RPA\%file_rpa%.rpa"
+set "currentdir=%~dp0%"
+cd "%currentdir%\01_Input_RPA"
+for %%f in (*.rpa) do (
+    echo    + Unpacking "%%~nf%%~xf" - %%~zf bytes
+    py -3 -m unrpa -mp "..\02_Output_RPA" "%%f"
+)
+cd "%currentdir%"
 ECHO.
 ECHO --------------------------- DECOMPILING RPA FILE IS DONE -------------------------------
 ECHO -------------------------- OUTPUT FOLDER - 02_Output_RPA -------------------------------
@@ -141,13 +144,13 @@ GOTO:RPA_deco
 
 :: - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - +
 :Output_RPA
-%CD%\unrpyc\unrpyc.py %CD%\02_Output_RPA
+py -2 %CD%\unrpyc\unrpyc.py %CD%\02_Output_RPA
 ROBOCOPY %CD%\02_Output_RPA %CD%\04_Output_RPYC *.rpy /XF *.rpyc /MOVE /S /E /NJS /NJH
 GOTO RPYC_end
 
 :: - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - + - +
 :Input_RPYC
-%CD%\unrpyc\unrpyc.py %CD%\03_Input_RPYC
+py -2 %CD%\unrpyc\unrpyc.py %CD%\03_Input_RPYC
 ROBOCOPY %CD%\03_Input_RPYC %CD%\04_Output_RPYC *.rpy /XF *.rpyc /MOVE /S /E /NJS /NJH
 GOTO RPYC_end
 
